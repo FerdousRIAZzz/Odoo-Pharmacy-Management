@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- FORM VIEW: what you see when you open one category record -->
+    <record id="view_pharmacy_medicine_category_form" model="ir.ui.view">
+        <field name="name">pharmacy.medicine.category.form</field>
+        <field name="model">pharmacy.medicine.category</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="description"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- LIST VIEW: the table you see when browsing all categories -->
+    <record id="view_pharmacy_medicine_category_list" model="ir.ui.view">
+        <field name="name">pharmacy.medicine.category.list</field>
+        <field name="model">pharmacy.medicine.category</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="medicine_count"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ACTION: the "window action" that ties a menu item to these views -->
+    <record id="action_pharmacy_medicine_category" model="ir.actions.act_window">
+        <field name="name">Medicine Categories</field>
+        <field name="res_model">pharmacy.medicine.category</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

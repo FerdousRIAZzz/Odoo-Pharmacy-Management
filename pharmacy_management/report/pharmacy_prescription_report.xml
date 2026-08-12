@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        ir.actions.report is the "print button" action. report_name points
+        at the QWeb template (defined in the templates file) that actually
+        lays out the PDF content.
+    -->
+    <record id="action_report_pharmacy_prescription" model="ir.actions.report">
+        <field name="name">Prescription</field>
+        <field name="model">pharmacy.prescription</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">pharmacy_management.report_prescription_document</field>
+        <field name="report_file">pharmacy_management.report_prescription_document</field>
+        <field name="print_report_name">'Prescription - %s' % (object.name)</field>
+        <field name="binding_model_id" ref="model_pharmacy_prescription"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

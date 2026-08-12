@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    data/pharmacy_cron.xml
+
+    ir.cron records tell Odoo "run this model method automatically, on
+    this schedule". These two jobs run once a day and don't need any
+    user to be logged in — Odoo's scheduler process triggers them.
+-->
+<odoo>
+    <record id="cron_pharmacy_low_stock_check" model="ir.cron">
+        <field name="name">Pharmacy: Check Low Stock Medicines</field>
+        <field name="model_id" ref="model_pharmacy_medicine"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_check_low_stock()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">True</field>
+    </record>
+
+    <record id="cron_pharmacy_expiry_check" model="ir.cron">
+        <field name="name">Pharmacy: Check Near-Expiry Batches</field>
+        <field name="model_id" ref="model_pharmacy_medicine"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_check_near_expiry_batches()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    data/pharmacy_sequence.xml
+
+    ir.sequence is Odoo's built-in tool for generating gapless, prefixed,
+    auto-incrementing numbers safely even with many users creating
+    records at the same time. We defined the Python side of this in
+    PharmacyPrescription.create() — this record is what next_by_code()
+    actually looks up.
+-->
+<odoo>
+    <record id="seq_pharmacy_prescription" model="ir.sequence">
+        <field name="name">Pharmacy Prescription</field>
+        <field name="code">pharmacy.prescription</field>
+        <field name="prefix">RX/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+    </record>
+</odoo>

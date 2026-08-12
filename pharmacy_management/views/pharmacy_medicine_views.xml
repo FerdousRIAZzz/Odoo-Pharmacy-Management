@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_pharmacy_medicine_form" model="ir.ui.view">
+        <field name="name">pharmacy.medicine.form</field>
+        <field name="model">pharmacy.medicine</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <!-- A simple text badge that turns visible only when
+                         the medicine is low on stock -->
+                    <field name="is_low_stock" invisible="1"/>
+                </header>
+                <sheet>
+                    <!-- Smart button: click it to jump to this medicine's
+                         batches. button_box is the standard Odoo slot for
+                         these top-right stat buttons. -->
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_batches" type="object"
+                                class="oe_stat_button" icon="fa-flask">
+                            <field name="total_quantity" widget="statinfo" string="Units"/>
+                        </button>
+                    </div>
+
+                    <widget name="web_ribbon" title="Low Stock"
+                            bg_color="text-bg-danger"
+                            invisible="not is_low_stock"/>
+
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="generic_name"/>
+                            <field name="manufacturer"/>
+                            <field name="category_id"/>
+                            <field name="dosage_form"/>
+                        </group>
+                        <group>
+                            <field name="unit_price"/>
+                            <field name="reorder_level"/>
+                            <field name="prescription_required"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Batches">
+                            <field name="batch_ids">
+                                <list editable="bottom">
+                                    <field name="batch_number"/>
+                                    <field name="expiry_date"/>
+                                    <field name="quantity"/>
+                                    <field name="is_expired" column_invisible="1"/>
+                                    <field name="is_near_expiry" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <!-- chatter: message log / activities / followers -->
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_pharmacy_medicine_list" model="ir.ui.view">
+        <field name="name">pharmacy.medicine.list</field>
+        <field name="model">pharmacy.medicine</field>
+        <field name="arch" type="xml">
+            <!-- decoration-* classes color a whole row conditionally,
+                 based on a Python expression evaluated per-record -->
+            <list decoration-danger="is_low_stock">
+                <field name="name"/>
+                <field name="category_id"/>
+                <field name="dosage_form"/>
+                <field name="unit_price"/>
+                <field name="total_quantity"/>
+                <field name="reorder_level"/>
+                <field name="prescription_required" widget="boolean_toggle"/>
+                <field name="is_low_stock" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_pharmacy_medicine_kanban" model="ir.ui.view">
+        <field name="name">pharmacy.medicine.kanban</field>
+        <field name="model">pharmacy.medicine</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="name"/>
+                <field name="total_quantity"/>
+                <field name="unit_price"/>
+                <field name="is_low_stock"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click p-2">
+                            <strong><field name="name"/></strong>
+                            <div>Qty: <field name="total_quantity"/></div>
+                            <div>Price: <field name="unit_price"/></div>
+                            <span t-if="record.is_low_stock.raw_value"
+                                  class="badge text-bg-danger">Low Stock</span>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_pharmacy_medicine_search" model="ir.ui.view">
+        <field name="name">pharmacy.medicine.search</field>
+        <field name="model">pharmacy.medicine</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="category_id"/>
+                <filter string="Low Stock" name="filter_low_stock"
+                        domain="[('is_low_stock', '=', True)]"/>
+                <filter string="Prescription Required" name="filter_rx_required"
+                        domain="[('prescription_required', '=', True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Category" name="groupby_category"
+                            context="{'group_by': 'category_id'}"/>
+                    <filter string="Dosage Form" name="groupby_dosage_form"
+                            context="{'group_by': 'dosage_form'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_pharmacy_medicine" model="ir.actions.act_window">
+        <field name="name">Medicines</field>
+        <field name="res_model">pharmacy.medicine</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="view_pharmacy_medicine_search"/>
+        <field name="context">{'search_default_filter_low_stock': 0}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add your first medicine to the catalog
+            </p>
+        </field>
+    </record>
+</odoo>

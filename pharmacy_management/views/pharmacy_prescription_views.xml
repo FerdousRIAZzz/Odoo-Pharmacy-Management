@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_pharmacy_prescription_form" model="ir.ui.view">
+        <field name="name">pharmacy.prescription.form</field>
+        <field name="model">pharmacy.prescription</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <!-- Buttons only appear in the states where the action
+                         makes sense, controlled by "invisible" -->
+                    <button name="action_verify" type="object" string="Verify"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_dispense" type="object" string="Dispense"
+                            class="btn-primary" invisible="state != 'verified'"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('dispensed', 'cancelled')"/>
+                    <button name="action_reset_to_draft" type="object" string="Reset to Draft"
+                            invisible="state != 'cancelled'"/>
+                    <!-- statusbar widget renders the state field as the
+                         familiar horizontal progress pill at the top -->
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,verified,dispensed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="patient_id"/>
+                            <field name="doctor_name"/>
+                            <field name="prescription_date"/>
+                        </group>
+                        <group>
+                            <field name="dispensed_date" invisible="state != 'dispensed'"/>
+                            <field name="pharmacist_id" invisible="state != 'dispensed'"/>
+                            <field name="total_amount"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Medicines">
+                            <field name="line_ids" readonly="state != 'draft'">
+                                <list editable="bottom">
+                                    <field name="medicine_id"/>
+                                    <field name="quantity"/>
+                                    <field name="dosage_instructions"/>
+                                    <field name="unit_price" readonly="1"/>
+                                    <field name="subtotal" readonly="1"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_pharmacy_prescription_list" model="ir.ui.view">
+        <field name="name">pharmacy.prescription.list</field>
+        <field name="model">pharmacy.prescription</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state == 'cancelled'" decoration-success="state == 'dispensed'">
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="doctor_name"/>
+                <field name="prescription_date"/>
+                <field name="total_amount"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'verified'"
+                       decoration-success="state == 'dispensed'"
+                       decoration-danger="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_pharmacy_prescription_search" model="ir.ui.view">
+        <field name="name">pharmacy.prescription.search</field>
+        <field name="model">pharmacy.prescription</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="patient_id"/>
+                <field name="doctor_name"/>
+                <filter string="Draft" name="filter_draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Verified" name="filter_verified" domain="[('state', '=', 'verified')]"/>
+                <filter string="Dispensed" name="filter_dispensed" domain="[('state', '=', 'dispensed')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="groupby_state" context="{'group_by': 'state'}"/>
+                    <filter string="Patient" name="groupby_patient" context="{'group_by': 'patient_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_pharmacy_prescription" model="ir.actions.act_window">
+        <field name="name">Prescriptions</field>
+        <field name="res_model">pharmacy.prescription</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_pharmacy_prescription_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first prescription
+            </p>
+        </field>
+    </record>
+</odoo>

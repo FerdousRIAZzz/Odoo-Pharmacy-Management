@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    security/pharmacy_security.xml
+
+    Here we define our own MODULE CATEGORY (so it groups nicely under
+    Settings > Users & Companies > Groups) and three GROUPS representing
+    the three roles that will use this app day to day. Groups don't grant
+    permissions by themselves — ir.model.access.csv (next file) does the
+    actual granting, by referencing these group IDs.
+-->
+<odoo>
+    <record id="module_category_pharmacy" model="ir.module.category">
+        <field name="name">Pharmacy</field>
+        <field name="description">Access rights for the Pharmacy Management app</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- Technician: can register patients, create/verify prescriptions,
+         and dispense them, but cannot change catalog/config data. -->
+    <record id="group_pharmacy_technician" model="res.groups">
+        <field name="name">Pharmacy Technician</field>
+        <field name="category_id" ref="module_category_pharmacy"/>
+    </record>
+
+    <!-- Pharmacist: everything a technician can do, PLUS manage the
+         medicine catalog and batches. implied_ids means every user in
+         this group automatically also gets Technician-level access. -->
+    <record id="group_pharmacy_pharmacist" model="res.groups">
+        <field name="name">Pharmacist</field>
+        <field name="category_id" ref="module_category_pharmacy"/>
+        <field name="implied_ids" eval="[(4, ref('group_pharmacy_technician'))]"/>
+    </record>
+
+    <!-- Manager: full access, including deleting records and managing
+         categories/configuration. -->
+    <record id="group_pharmacy_manager" model="res.groups">
+        <field name="name">Pharmacy Manager</field>
+        <field name="category_id" ref="module_category_pharmacy"/>
+        <field name="implied_ids" eval="[(4, ref('group_pharmacy_pharmacist'))]"/>
+    </record>
+</odoo>

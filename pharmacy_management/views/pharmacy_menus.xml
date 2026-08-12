@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Root menu: this is the tile that shows up on the Odoo home
+         screen / apps switcher because our manifest set 'application': True -->
+    <menuitem id="menu_pharmacy_root" name="Pharmacy" sequence="10"
+              web_icon="pharmacy_management,static/description/icon.png"/>
+
+    <!-- Operations: the day-to-day screens staff use most -->
+    <menuitem id="menu_pharmacy_operations" name="Operations"
+              parent="menu_pharmacy_root" sequence="10"/>
+    <menuitem id="menu_pharmacy_prescription" name="Prescriptions"
+              parent="menu_pharmacy_operations" sequence="10"
+              action="action_pharmacy_prescription"/>
+    <menuitem id="menu_pharmacy_patient" name="Patients"
+              parent="menu_pharmacy_operations" sequence="20"
+              action="action_pharmacy_patient"/>
+
+    <!-- Inventory: catalog and stock-related screens -->
+    <menuitem id="menu_pharmacy_inventory" name="Inventory"
+              parent="menu_pharmacy_root" sequence="20"/>
+    <menuitem id="menu_pharmacy_medicine" name="Medicines"
+              parent="menu_pharmacy_inventory" sequence="10"
+              action="action_pharmacy_medicine"/>
+    <menuitem id="menu_pharmacy_medicine_batch" name="Batches"
+              parent="menu_pharmacy_inventory" sequence="20"
+              action="action_pharmacy_medicine_batch"/>
+
+    <!-- Configuration: master data that changes rarely -->
+    <menuitem id="menu_pharmacy_configuration" name="Configuration"
+              parent="menu_pharmacy_root" sequence="30"
+              groups="pharmacy_management.group_pharmacy_manager"/>
+    <menuitem id="menu_pharmacy_medicine_category" name="Medicine Categories"
+              parent="menu_pharmacy_configuration" sequence="10"
+              action="action_pharmacy_medicine_category"/>
+</odoo>

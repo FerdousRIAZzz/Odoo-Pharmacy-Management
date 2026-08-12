@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        QWeb is Odoo's own templating language (XML tags with t-* directives,
+        rendered server-side into HTML, then converted to PDF via wkhtmltopdf).
+
+        web.html_container + web.external_layout give us the standard Odoo
+        page frame (company logo/address in the header, page numbers in the
+        footer) for free — we just fill in the body.
+    -->
+    <template id="report_prescription_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Prescription <span t-field="o.name"/></h2>
+
+                        <div class="row mt-3 mb-3">
+                            <div class="col-6">
+                                <strong>Patient:</strong>
+                                <p t-field="o.patient_id.name"/>
+                            </div>
+                            <div class="col-6">
+                                <strong>Prescribing Doctor:</strong>
+                                <p t-field="o.doctor_name"/>
+                                <strong>Date:</strong>
+                                <p t-field="o.prescription_date"/>
+                            </div>
+                        </div>
+
+                        <table class="table table-sm o_report_table">
+                            <thead>
+                                <tr>
+                                    <th>Medicine</th>
+                                    <th>Dosage Instructions</th>
+                                    <th class="text-end">Qty</th>
+                                    <th class="text-end">Unit Price</th>
+                                    <th class="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.line_ids" t-as="line">
+                                    <td t-field="line.medicine_id.name"/>
+                                    <td t-field="line.dosage_instructions"/>
+                                    <td class="text-end" t-field="line.quantity"/>
+                                    <td class="text-end" t-field="line.unit_price"/>
+                                    <td class="text-end" t-field="line.subtotal"/>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="row">
+                            <div class="col-6 offset-6">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Total</strong></td>
+                                        <td class="text-end">
+                                            <strong t-field="o.total_amount"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <p t-if="o.state == 'dispensed'">
+                            Dispensed by <span t-field="o.pharmacist_id.name"/>
+                            on <span t-field="o.dispensed_date"/>.
+                        </p>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

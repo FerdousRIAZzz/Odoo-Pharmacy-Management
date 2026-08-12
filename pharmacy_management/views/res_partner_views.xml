@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        This does NOT create a new view. inherit_id points at Odoo's own
+        Contact form (base.view_partner_form), and xpath finds a spot
+        inside that existing XML tree to inject our new fields into.
+        This is the standard way to customize a screen that belongs to
+        core Odoo (or another app) without copy-pasting its whole view.
+    -->
+    <record id="view_partner_form_inherit_pharmacy" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.pharmacy</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <!-- Add a smart button next to the existing ones -->
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                <button name="action_view_prescriptions" type="object"
+                        class="oe_stat_button" icon="fa-medkit"
+                        invisible="not is_pharmacy_patient">
+                    <field name="prescription_count" widget="statinfo" string="Prescriptions"/>
+                </button>
+            </xpath>
+
+            <!-- Add a new notebook page, only meaningful once "Is Patient"
+                 is checked -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Patient Info" name="patient_info">
+                    <group>
+                        <field name="is_pharmacy_patient"/>
+                    </group>
+                    <group invisible="not is_pharmacy_patient">
+                        <group>
+                            <field name="date_of_birth"/>
+                            <field name="blood_group"/>
+                        </group>
+                        <group>
+                            <field name="known_allergies"/>
+                            <field name="emergency_contact"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- A dedicated menu action that only shows contacts flagged as
+         patients, so pharmacy staff aren't stuck browsing every vendor
+         and customer in the database. -->
+    <record id="action_pharmacy_patient" model="ir.actions.act_window">
+        <field name="name">Patients</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_pharmacy_patient', '=', True)]</field>
+        <field name="context">{'default_is_pharmacy_patient': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Register your first patient
+            </p>
+        </field>
+    </record>
+</odoo>
